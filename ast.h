@@ -1,6 +1,9 @@
 #include <string>
 #include <vector>
 
+#ifndef KALEIDOSCOPE_AST_H
+#define KALEIDOSCOPE_AST_H
+
 class Expr {
 public:
     virtual ~Expr() = default;
@@ -62,7 +65,7 @@ public:
     FunDef(std::unique_ptr<Proto> proto, std::unique_ptr<Expr> body): proto(std::move(proto)), body(std::move(body)) {}
 };
 
-
+#endif //KALEIDOSCOPE_AST_H
 
 
 

@@ -1,24 +1,11 @@
-#include <string>
-
-enum class Token {
-    tok_eof,
-
-    // commands
-    tok_def,
-    tok_extern,
-
-    // primary
-    tok_id,
-    tok_num,
-    tok_unknown
-};
+#include "lexer.h"
 
 std::string id_val; // Filled in if tok_id lexed
 char unknown_val;   // Filled in if tok_unknown lexed
 double num_val;     // Filled in if tok_num lexed
 
 // Is `c` part of a number?
-bool is_num_char(char c) {
+static bool is_num_char(char c) {
     return isdigit(c) || c == '.';
 }
 
@@ -59,6 +46,8 @@ Token get_token() {
 
         if (last_char != EOF) return get_token();
     }
+
+    if (last_char == EOF) return Token::tok_eof;
 
     unknown_val = last_char;
     return Token::tok_unknown;
