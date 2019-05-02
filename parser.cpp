@@ -27,9 +27,7 @@ std::unique_ptr<Proto> log_err_proto(const char* str) {
 
 // Parsing functions
 
-std::unique_ptr<Expr> parse_expr() {
-    return nullptr;
-}
+std::unique_ptr<Expr> parse_expr();
 
 std::unique_ptr<Expr> parse_num() {
     auto res = llvm::make_unique<Num>(num_val);
@@ -69,6 +67,10 @@ std::unique_ptr<Expr> parse_id() {
     return llvm::make_unique<App>(id, std::move(args));
 }
 
+// primary ::=
+//   id
+//   num
+//   ( expr )
 std::unique_ptr<Expr> parse_primary() {
     switch (curr_tok) {
         case Token::tok_id:
@@ -80,4 +82,51 @@ std::unique_ptr<Expr> parse_primary() {
             return log_err_expr("unknown token when parsing an expression");
     }
 }
+
+// The higher the priority the stronger the operator binds.
+// Invalid operator returns -1.
+static int binop_pri(char op) {
+    switch (op) {
+        case '<': return 10;
+        case '+': return 20;
+        case '-': return 20;
+        case '*': return 30;
+        default: return -1;
+    }
+}
+
+static bool is_curr_tok_op() {
+    return curr_tok == Token::tok_unknown && binop_pri(unknown_val) != -1;
+}
+
+std::unique_ptr<BinaryExpr> make_binexp(char op, std::unique_ptr<Expr> lhs, std::unique_ptr<Expr> rhs) {
+    return llvm::make_unique<BinaryExpr>(op, std::move(lhs), std::move(rhs));
+}
+
+// binop_rhs ::= (bin_op primary)*
+std::unique_ptr<Expr> parse_binop_rhs(int previous_pri, std::unique_ptr<Expr> lhs) {
+    if (!is_curr_tok_op()) return lhs; // we've run out of operators
+    char op = unknown_val;
+    int op_pri = binop_pri(op);
+    if (op_pri <= previous_pri) return lhs;
+    get_next_tok(); // eat operator
+    auto rhs = parse_primary();
+    if (!rhs) return nullptr;
+    if (!is_curr_tok_op()) return make_binexp(op, std::move(lhs), std::move(rhs));
+    char next_op = unknown_val;
+    int next_pri = binop_pri(next_op);
+    if (next_pri > op_pri) {
+        rhs = parse_binop_rhs(op_pri, std::move(rhs));
+    }
+    return parse_binop_rhs(0, make_binexp(op, std::move(lhs), std::move(rhs)));
+}
+
+// expr ::= primary binop_rhs
+std::unique_ptr<Expr> parse_expr() {
+    auto lhs = parse_primary();
+    if (!lhs) return nullptr;
+    return parse_binop_rhs(0, std::move(lhs));
+}
+
+
 
