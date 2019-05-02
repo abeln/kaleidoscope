@@ -8,11 +8,11 @@ enum class Token {
     tok_eof,
 
     // commands
-            tok_def,
+    tok_def,
     tok_extern,
 
     // primary
-            tok_id,
+    tok_id,
     tok_num,
     tok_unknown
 };
