@@ -25,6 +25,11 @@ std::unique_ptr<Proto> log_err_proto(const char* str) {
     return nullptr;
 }
 
+std::unique_ptr<FunDef> log_err_fundef(const char* str) {
+    fprintf(stderr, "log_err: %s\n", str);
+    return nullptr;
+}
+
 // Parsing functions
 
 std::unique_ptr<Expr> parse_expr();
@@ -126,6 +131,54 @@ std::unique_ptr<Expr> parse_expr() {
     auto lhs = parse_primary();
     if (!lhs) return nullptr;
     return parse_binop_rhs(0, std::move(lhs));
+}
+
+// proto ::=
+//   id ( id* )
+std::unique_ptr<Proto> parse_proto() {
+    if (curr_tok != Token::tok_id) return log_err_proto("expected function name while parsing prototype");
+    std::string fun_name = id_val;
+    get_next_tok();
+    if (!is_curr_tok('(')) return log_err_proto("expected '(' while parsing prototype");
+    get_next_tok();
+    std::vector<std::string> args;
+    while (!is_curr_tok(')')) {
+        switch (curr_tok) {
+            case Token::tok_id:
+                args.push_back(id_val);
+                get_next_tok();
+            default:
+                return log_err_proto("expected id for proto argument");
+        }
+    }
+    get_next_tok(); // eat ')'
+    return llvm::make_unique<Proto>(fun_name, std::move(args));
+}
+
+// def ::= def proto expr
+std::unique_ptr<FunDef> parse_def() {
+    if (curr_tok != Token::tok_id || id_val != "def") return log_err_fundef("expected def while parsing function def");
+    get_next_tok();
+    auto proto = parse_proto();
+    if (!proto) return nullptr;
+    auto expr = parse_expr();
+    if (!expr) return nullptr;
+    return llvm::make_unique<FunDef>(std::move(proto), std::move(expr));
+}
+
+// extern ::= 'extern' proto
+std::unique_ptr<Proto> parse_extern() {
+    if (curr_tok != Token::tok_id || id_val != "extern") return log_err_proto("expected extern while parsing function extern def");
+    get_next_tok();
+    return parse_proto();
+}
+
+// top_level_expr ::= expr
+std::unique_ptr<FunDef> parse_toplevel() {
+    auto expr = parse_expr();
+    if (!expr) return nullptr;
+    auto proto = llvm::make_unique<Proto>("", std::vector<std::string>());
+    return llvm::make_unique<FunDef>(std::move(proto), std::move(expr));
 }
 
 
