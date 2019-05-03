@@ -2,14 +2,35 @@
 #include "ast.h"
 #include "llvm/ADT/STLExtras.h"
 
-static Token curr_tok;
+Token curr_tok;
 
-static Token get_next_tok() {
+Token get_next_tok() {
     curr_tok = get_token();
+    switch (curr_tok) {
+        case Token::tok_def:
+            fprintf(stderr, "tok_def\n");
+            break;
+        case Token::tok_extern:
+            fprintf(stderr, "tok_extern\n");
+            break;
+        case Token::tok_eof:
+            fprintf(stderr, "tok_eof\n");
+            break;
+        case Token::tok_id:
+            fprintf(stderr, "tok_id %s\n", id_val.c_str());
+            break;
+        case Token::tok_unknown:
+            fprintf(stderr, "tok_unknown\n");
+            break;
+        case Token::tok_num:
+            fprintf(stderr, "tok_num\n");
+            break;
+    }
     return curr_tok;
 }
 
 static bool is_curr_tok(char c) {
+    fprintf(stderr, "[is_curr_tok] c = %c unknown val = %c\n", c, unknown_val);
     return curr_tok == Token::tok_unknown && unknown_val == c;
 }
 
@@ -147,6 +168,7 @@ std::unique_ptr<Proto> parse_proto() {
             case Token::tok_id:
                 args.push_back(id_val);
                 get_next_tok();
+                break;
             default:
                 return log_err_proto("expected id for proto argument");
         }
@@ -157,7 +179,7 @@ std::unique_ptr<Proto> parse_proto() {
 
 // def ::= def proto expr
 std::unique_ptr<FunDef> parse_def() {
-    if (curr_tok != Token::tok_id || id_val != "def") return log_err_fundef("expected def while parsing function def");
+    if (curr_tok != Token::tok_def) return log_err_fundef("expected def while parsing function def");
     get_next_tok();
     auto proto = parse_proto();
     if (!proto) return nullptr;
@@ -168,7 +190,7 @@ std::unique_ptr<FunDef> parse_def() {
 
 // extern ::= 'extern' proto
 std::unique_ptr<Proto> parse_extern() {
-    if (curr_tok != Token::tok_id || id_val != "extern") return log_err_proto("expected extern while parsing function extern def");
+    if (curr_tok != Token::tok_extern) return log_err_proto("expected extern while parsing function extern def");
     get_next_tok();
     return parse_proto();
 }
