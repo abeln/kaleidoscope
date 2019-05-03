@@ -6,6 +6,7 @@ Token curr_tok;
 
 Token get_next_tok() {
     curr_tok = get_token();
+    /*
     switch (curr_tok) {
         case Token::tok_def:
             fprintf(stderr, "tok_def\n");
@@ -26,11 +27,12 @@ Token get_next_tok() {
             fprintf(stderr, "tok_num\n");
             break;
     }
+    */
     return curr_tok;
 }
 
 static bool is_curr_tok(char c) {
-    fprintf(stderr, "[is_curr_tok] c = %c unknown val = %c\n", c, unknown_val);
+    //fprintf(stderr, "[is_curr_tok] c = %c unknown val = %c\n", c, unknown_val);
     return curr_tok == Token::tok_unknown && unknown_val == c;
 }
 
@@ -196,7 +198,7 @@ std::unique_ptr<Proto> parse_extern() {
 }
 
 // top_level_expr ::= expr
-std::unique_ptr<FunDef> parse_toplevel() {
+std::unique_ptr<FunDef> parse_top_level() {
     auto expr = parse_expr();
     if (!expr) return nullptr;
     auto proto = llvm::make_unique<Proto>("", std::vector<std::string>());

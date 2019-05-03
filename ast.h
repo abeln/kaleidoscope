@@ -7,6 +7,7 @@
 class Expr {
 public:
     virtual ~Expr() = default;
+    std::string pprint0();
     virtual std::string pprint(int tab) = 0;
 };
 
