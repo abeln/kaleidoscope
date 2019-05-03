@@ -6,28 +6,26 @@ Token curr_tok;
 
 Token get_next_tok() {
     curr_tok = get_token();
-    /*
-    switch (curr_tok) {
-        case Token::tok_def:
-            fprintf(stderr, "tok_def\n");
-            break;
-        case Token::tok_extern:
-            fprintf(stderr, "tok_extern\n");
-            break;
-        case Token::tok_eof:
-            fprintf(stderr, "tok_eof\n");
-            break;
-        case Token::tok_id:
-            fprintf(stderr, "tok_id %s\n", id_val.c_str());
-            break;
-        case Token::tok_unknown:
-            fprintf(stderr, "tok_unknown\n");
-            break;
-        case Token::tok_num:
-            fprintf(stderr, "tok_num\n");
-            break;
-    }
-    */
+//    switch (curr_tok) {
+//        case Token::tok_def:
+//            fprintf(stderr, "tok_def\n");
+//            break;
+//        case Token::tok_extern:
+//            fprintf(stderr, "tok_extern\n");
+//            break;
+//        case Token::tok_eof:
+//            fprintf(stderr, "tok_eof\n");
+//            break;
+//        case Token::tok_id:
+//            fprintf(stderr, "tok_id %s\n", id_val.c_str());
+//            break;
+//        case Token::tok_unknown:
+//            fprintf(stderr, "tok_unknown %c\n", unknown_val);
+//            break;
+//        case Token::tok_num:
+//            fprintf(stderr, "tok_num\n");
+//            break;
+//    }
     return curr_tok;
 }
 

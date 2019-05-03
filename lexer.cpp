@@ -11,15 +11,17 @@ static bool is_num_char(char c) {
 
 // Computes the next token. Possibly fills in `tok_id` or `tok_num` as a side effect.
 Token get_token() {
-    int last_char = getchar();
+    static int last_char = ' ';
     while (isspace(last_char)) last_char = getchar();
 
     if (isalpha(last_char)) {
         id_val = static_cast<char>(last_char);
         last_char = getchar();
+//        printf("last_char = %c\n", last_char);
         while (isalpha(last_char)) {
             id_val += static_cast<char>(last_char);
             last_char = getchar();
+//            printf("last_char = %c\n", last_char);
         }
 
         if (id_val == "def") return Token::tok_def;
@@ -50,6 +52,7 @@ Token get_token() {
     if (last_char == EOF) return Token::tok_eof;
 
     unknown_val = last_char;
+    last_char = getchar();
     return Token::tok_unknown;
 }
 

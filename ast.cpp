@@ -25,7 +25,7 @@ std::string Var::pprint(int tab) {
 std::string BinaryExpr::pprint(int tab) {
     return with_tab(
             std::string("BinOp(\n") +
-            sp + std::to_string(this->op) + ",\n" +
+            with_tab(std::string(1, this->op) + ",\n", tab + spsz) +
             this->left->pprint(tab + spsz) + ",\n" +
             this->right->pprint(tab + spsz) + ")", tab);
 }
