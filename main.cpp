@@ -18,6 +18,8 @@ int main() {
             case Token::tok_def:
                 handle_def();
                 break;
+            case Token::tok_extern:
+                break;
             default:
                 fprintf(stderr, "unknown token\n");
                 break;
