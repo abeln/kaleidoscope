@@ -15,28 +15,26 @@ public:
 };
 
 class Num : public Expr {
-    double val;
-
 public:
+    double val;
     explicit Num(double val): val(val) {}
     virtual std::string pprint(int tab) override;
     void visit(ExprVisitor& visitor) override;
 };
 
 class Var : public Expr {
-    std::string name;
-
 public:
+    std::string name;
     Var(std::string name): name(std::move(name)) {}
     virtual std::string pprint(int tab) override;
     void visit(ExprVisitor& visitor) override;
 };
 
 class BinaryExpr : public Expr {
+public:
     char op;
     std::unique_ptr<Expr> left, right;
 
-public:
     BinaryExpr(char op, std::unique_ptr<Expr> left, std::unique_ptr<Expr> right) :
         op(op), left(std::move(left)), right(std::move(right))
     {}
@@ -45,10 +43,10 @@ public:
 };
 
 class App : public Expr {
+public:
     std::string callee;
     std::vector<std::unique_ptr<Expr>> args;
 
-public:
     App(std::string callee, std::vector<std::unique_ptr<Expr>> args) :
         callee(std::move(callee)), args(std::move(args))
     {}

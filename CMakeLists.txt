@@ -11,7 +11,7 @@ message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 include_directories(${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
-add_executable(kaleidoscope main.cpp lexer.cpp ast.h parser.cpp lexer.h parser.h ast.cpp)
+add_executable(kaleidoscope main.cpp lexer.cpp ast.h parser.cpp lexer.h parser.h ast.cpp codegen.cpp codegen.h)
 
 llvm_map_components_to_libnames(llvm_libs support core irreader)
 
