@@ -54,3 +54,20 @@ std::string FunDef::pprint(int tab) {
             this->body->pprint(tab + spsz) + ")";
     return with_tab(res, tab);
 }
+
+// Visitor pattern
+
+void Num::visit(ExprVisitor &visitor) {
+    visitor.visit(*this);
+}
+
+void Var::visit(ExprVisitor &visitor) {
+    visitor.visit(*this);
+}
+
+void App::visit(ExprVisitor &visitor) {
+    visitor.visit(*this);
+}
+void BinaryExpr::visit(ExprVisitor &visitor) {
+    visitor.visit(*this);
+}

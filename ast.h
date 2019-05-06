@@ -4,11 +4,14 @@
 #ifndef KALEIDOSCOPE_AST_H
 #define KALEIDOSCOPE_AST_H
 
+class ExprVisitor;
+
 class Expr {
 public:
     virtual ~Expr() = default;
     std::string pprint0();
     virtual std::string pprint(int tab) = 0;
+    virtual void visit(ExprVisitor& visitor) = 0;
 };
 
 class Num : public Expr {
@@ -17,6 +20,7 @@ class Num : public Expr {
 public:
     explicit Num(double val): val(val) {}
     virtual std::string pprint(int tab) override;
+    void visit(ExprVisitor& visitor) override;
 };
 
 class Var : public Expr {
@@ -25,6 +29,7 @@ class Var : public Expr {
 public:
     Var(std::string name): name(std::move(name)) {}
     virtual std::string pprint(int tab) override;
+    void visit(ExprVisitor& visitor) override;
 };
 
 class BinaryExpr : public Expr {
@@ -36,6 +41,7 @@ public:
         op(op), left(std::move(left)), right(std::move(right))
     {}
     virtual std::string pprint(int tab) override;
+    void visit(ExprVisitor& visitor) override;
 };
 
 class App : public Expr {
@@ -47,6 +53,7 @@ public:
         callee(std::move(callee)), args(std::move(args))
     {}
     virtual std::string pprint(int tab) override;
+    void visit(ExprVisitor& visitor) override;
 };
 
 // The classes below are _not_ expressions.
@@ -71,6 +78,14 @@ class FunDef {
 public:
     FunDef(std::unique_ptr<Proto> proto, std::unique_ptr<Expr> body): proto(std::move(proto)), body(std::move(body)) {}
     virtual std::string pprint(int tab);
+};
+
+class ExprVisitor {
+public:
+    virtual void visit(Num& expr) = 0;
+    virtual void visit(Var& expr) = 0;
+    virtual void visit(App& expr) = 0;
+    virtual void visit(BinaryExpr& expr) = 0;
 };
 
 #endif //KALEIDOSCOPE_AST_H
