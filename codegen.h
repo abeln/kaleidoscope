@@ -17,10 +17,12 @@
 #include "ast.h"
 
 struct Ctx {
-    llvm::LLVMContext& context;
+    llvm::LLVMContext context;
     std::unique_ptr<llvm::Module> module;
     llvm::IRBuilder<> builder;
     std::map<std::string, llvm::Value*> sym_table;
+
+    Ctx(): builder(context) {}
 };
 
 class CGVisitor : public ExprVisitor {
@@ -44,5 +46,7 @@ public:
 llvm::Function* codegen(Ctx& ctx, const Proto& proto);
 
 llvm::Function* codegen(Ctx& ctx, const FunDef& fun);
+
+llvm::Value* codegen(Ctx& ctx, Expr& expr);
 
 #endif //KALEIDOSCOPE_CODEGEN_H

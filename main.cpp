@@ -1,6 +1,9 @@
 #include <iostream>
 #include "lexer.h"
 #include "parser.h"
+#include "codegen.h"
+
+static Ctx ctx;
 
 void handle_def() {
     auto def = parse_def();
@@ -9,6 +12,9 @@ void handle_def() {
         return;
     }
     fprintf(stderr, "%s\n", def->pprint(0).c_str());
+    auto *def_ir = codegen(ctx, *def);
+    def_ir->print(llvm::errs());
+    fprintf(stderr, "\n");
 }
 
 void handle_extern() {
@@ -18,6 +24,9 @@ void handle_extern() {
         return;
     }
     fprintf(stderr, "%s\n", ext->pprint(0).c_str());
+    auto *ext_ir = codegen(ctx, *ext);
+    ext_ir->print(llvm::errs());
+    fprintf(stderr, "\n");
 }
 
 void handle_top_level() {
@@ -27,10 +36,17 @@ void handle_top_level() {
         return;
     }
     fprintf(stderr, "%s\n", def->pprint(0).c_str());
+    auto *fn_ir = codegen(ctx, *def);
+    fn_ir->print(llvm::errs());
+    fprintf(stderr, "\n");
 }
 
+void init_ctx() {
+    ctx.module = llvm::make_unique<llvm::Module>("kaleidoscope module", ctx.context);
+}
 
 int main() {
+    init_ctx();
     while (true) {
         fprintf(stderr, "#> ");
         get_next_tok();
@@ -52,6 +68,5 @@ int main() {
                 break;
         }
     }
-
     return 0;
 }

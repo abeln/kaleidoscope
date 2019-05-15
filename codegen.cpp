@@ -105,14 +105,19 @@ llvm::Function *codegen(Ctx &ctx, const FunDef &fun_def) {
         ctx.sym_table[arg.getName()] = &arg;
     }
 
-    CGVisitor visitor(ctx);
-    fun_def.body->visit(visitor);
-    if (!visitor.res_value) {
+    auto *res = codegen(ctx, *fun_def.body);
+    if (!res) {
         fun->eraseFromParent();
         return nullptr;
     }
 
-    ctx.builder.CreateRet(visitor.res_value);
+    ctx.builder.CreateRet(res);
     llvm::verifyFunction(*fun);
     return fun;
+}
+
+llvm::Value *codegen(Ctx &ctx, Expr &expr) {
+    CGVisitor visitor(ctx);
+    expr.visit(visitor);
+    return visitor.res_value;
 }
