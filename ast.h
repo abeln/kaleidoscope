@@ -58,22 +58,20 @@ public:
 
 // The prototype of a function includes its name and argument names (and number).
 class Proto {
+public:
     std::string name;
     std::vector<std::string> args;
 
-public:
-
     Proto(std::string name, std::vector<std::string> args): name(std::move(name)), args(std::move(args)) {}
 
-    const std::string& get_name() const { return name; }
     virtual std::string pprint(int tab);
 };
 
 class FunDef {
+public:
     std::unique_ptr<Proto> proto;
     std::unique_ptr<Expr> body;
 
-public:
     FunDef(std::unique_ptr<Proto> proto, std::unique_ptr<Expr> body): proto(std::move(proto)), body(std::move(body)) {}
     virtual std::string pprint(int tab);
 };

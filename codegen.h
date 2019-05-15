@@ -16,16 +16,22 @@
 
 #include "ast.h"
 
+struct Ctx {
+    llvm::LLVMContext& context;
+    std::unique_ptr<llvm::Module> module;
+    llvm::IRBuilder<> builder;
+    std::map<std::string, llvm::Value*> sym_table;
+};
+
 class CGVisitor : public ExprVisitor {
 private:
-    llvm::LLVMContext context;
-    llvm::IRBuilder<> builder;
-    std::unique_ptr<llvm::Module> module;
-    std::map<std::string, llvm::Value*> sym_table;
-
-    llvm::Value* res_value; // result of code generation
+    Ctx& ctx;
 
 public:
+    llvm::Value* res_value; // result of code generation
+
+    explicit CGVisitor(Ctx& ctx);
+
     void visit(Num &expr) override;
 
     void visit(Var &expr) override;
@@ -34,5 +40,9 @@ public:
 
     void visit(BinaryExpr &expr) override;
 };
+
+llvm::Function* codegen(Ctx& ctx, const Proto& proto);
+
+llvm::Function* codegen(Ctx& ctx, const FunDef& fun);
 
 #endif //KALEIDOSCOPE_CODEGEN_H
