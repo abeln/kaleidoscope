@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <memory>
 
 #ifndef KALEIDOSCOPE_AST_H
 #define KALEIDOSCOPE_AST_H
