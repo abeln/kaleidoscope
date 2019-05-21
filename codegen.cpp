@@ -67,6 +67,10 @@ void CGVisitor::visit(BinaryExpr &expr) {
 
 CGVisitor::CGVisitor(Ctx& ctx): ctx(ctx), res_value(nullptr) {}
 
+void CGVisitor::visit(IfExpr &expr) {
+
+}
+
 llvm::Function *codegen(Ctx& ctx, const Proto &proto) {
     // Create argument types
     std::vector<llvm::Type*> args(proto.args.size(), llvm::Type::getDoubleTy(ctx.context));

@@ -14,6 +14,9 @@ enum class Token {
     // primary
     tok_id,
     tok_num,
+    tok_if,
+    tok_then,
+    tok_else,
     tok_unknown
 };
 

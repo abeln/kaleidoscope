@@ -55,6 +55,17 @@ public:
     void visit(ExprVisitor& visitor) override;
 };
 
+class IfExpr : public Expr {
+public:
+    std::unique_ptr<Expr> cond_expr, then_expr, else_expr;
+
+    IfExpr(std::unique_ptr<Expr> cond_expr, std::unique_ptr<Expr> then_expr, std::unique_ptr<Expr> else_expr) :
+        cond_expr(std::move(cond_expr)), then_expr(std::move(then_expr)), else_expr(std::move(else_expr)) {}
+
+    virtual std::string pprint(int tab) override;
+    void visit(ExprVisitor& visitor) override;
+};
+
 // The classes below are _not_ expressions.
 
 // The prototype of a function includes its name and argument names (and number).
@@ -83,6 +94,7 @@ public:
     virtual void visit(Var& expr) = 0;
     virtual void visit(App& expr) = 0;
     virtual void visit(BinaryExpr& expr) = 0;
+    virtual void visit(IfExpr& expr) = 0;
 };
 
 #endif //KALEIDOSCOPE_AST_H

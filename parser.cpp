@@ -93,6 +93,28 @@ std::unique_ptr<Expr> parse_id() {
     return llvm::make_unique<App>(id, std::move(args));
 }
 
+// if ::= if expr then expr else expr
+std::unique_ptr<Expr> parse_if_expr() {
+    get_next_tok(); // skip `if`
+
+    auto cond = parse_expr();
+    if (!cond) return nullptr;
+
+    if (curr_tok != Token::tok_then) return log_err_expr("expected 'then'");
+    get_next_tok(); // eat 'then'
+
+    auto then_exp = parse_expr();
+    if (!then_exp) return nullptr;
+
+    if (curr_tok != Token::tok_else) return log_err_expr("expected 'else'");
+    get_next_tok(); // eat 'else'
+
+    auto else_exp = parse_expr();
+    if (!else_exp) return nullptr;
+
+    return llvm::make_unique<IfExpr>(std::move(cond), std::move(then_exp), std::move(else_exp));
+}
+
 // primary ::=
 //   id
 //   num
@@ -103,6 +125,8 @@ std::unique_ptr<Expr> parse_primary() {
             return parse_id();
         case Token::tok_num:
             return parse_num();
+        case Token::tok_if:
+            return parse_if_expr();
         default:
             if (is_curr_tok('(')) return parse_parens();
             return log_err_expr("unknown token when parsing an expression");

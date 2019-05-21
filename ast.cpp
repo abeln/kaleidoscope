@@ -39,6 +39,14 @@ std::string App::pprint(int tab) {
     return with_tab(res, tab);
 }
 
+std::string IfExpr::pprint(int tab) {
+    return with_tab(
+            "If(\n" +
+            this->cond_expr->pprint(tab + spsz) + ",\n" +
+            this->then_expr->pprint(tab + spsz) + ",\n" +
+            this->else_expr->pprint(tab + spsz) + ")", tab);
+}
+
 std::string Proto::pprint(int tab) {
     auto res = "Proto(" + this->name;
     for (auto arg : this->args) {
@@ -69,5 +77,9 @@ void App::visit(ExprVisitor &visitor) {
     visitor.visit(*this);
 }
 void BinaryExpr::visit(ExprVisitor &visitor) {
+    visitor.visit(*this);
+}
+
+void IfExpr::visit(ExprVisitor &visitor) {
     visitor.visit(*this);
 }

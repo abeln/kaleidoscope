@@ -14,13 +14,13 @@
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Verifier.h"
 #include "llvm/IR/LegacyPassManager.h"
-
 #include "ast.h"
 
 struct Ctx {
     llvm::LLVMContext context;
     std::unique_ptr<llvm::Module> module;
     std::unique_ptr<llvm::legacy::FunctionPassManager> pass_manager;
+    //std::unique_ptr<llvm::Kal>
     llvm::IRBuilder<> builder;
     std::map<std::string, llvm::Value*> sym_table;
 
@@ -43,6 +43,8 @@ public:
     void visit(App &expr) override;
 
     void visit(BinaryExpr &expr) override;
+
+    void visit(IfExpr &expr) override;
 };
 
 llvm::Function* codegen(Ctx& ctx, const Proto& proto);

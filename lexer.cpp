@@ -26,6 +26,9 @@ Token get_token() {
 
         if (id_val == "def") return Token::tok_def;
         if (id_val == "extern") return Token::tok_extern;
+        if (id_val == "if") return Token::tok_if;
+        if (id_val == "then") return Token::tok_then;
+        if (id_val == "else") return Token::tok_else;
         return Token::tok_id;
     }
 
