@@ -113,6 +113,7 @@ llvm::Function *codegen(Ctx &ctx, const FunDef &fun_def) {
 
     ctx.builder.CreateRet(res);
     llvm::verifyFunction(*fun);
+    ctx.pass_manager->run(*fun);
     return fun;
 }
 

@@ -13,12 +13,14 @@
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Verifier.h"
+#include "llvm/IR/LegacyPassManager.h"
 
 #include "ast.h"
 
 struct Ctx {
     llvm::LLVMContext context;
     std::unique_ptr<llvm::Module> module;
+    std::unique_ptr<llvm::legacy::FunctionPassManager> pass_manager;
     llvm::IRBuilder<> builder;
     std::map<std::string, llvm::Value*> sym_table;
 
